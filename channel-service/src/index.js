@@ -168,6 +168,15 @@ app.get('/health', (req, res) => {
     timestamp: new Date() 
   });
 });
+// Keep-alive ping to prevent Render cold starts
+const https = require('https');
+setInterval(() => {
+  https.get('https://brewmatic-channel-service.onrender.com/health', (res) => {
+    console.log(`Keep-alive ping: ${res.statusCode}`);
+  }).on('error', (err) => {
+    console.error('Keep-alive error:', err.message);
+  });
+}, 840000); // every 14 minutes
 
 app.listen(PORT, () => {
   console.log(`📡 BrewMatic Channel Service running on port ${PORT}`);
